@@ -9,11 +9,14 @@ states = (
    ('titleline','exclusive'),
    ('locationline','exclusive'),
    ('contentline','exclusive'),
+   ('separatorline','exclusive'),
+   ('blankline','exclusive'),
 )
 
 tokens = (
     'TITLE',
     'AUTHORS',
+    'YOUR',
     'HIGHLIGHT_TYPE',
     'BOOKMARK_TYPE',
     'NOTE_TYPE',
@@ -35,17 +38,16 @@ tokens = (
     'CLIPPING_SEP',
 )
 
-def t_begin_titleline(t):
-    "﻿"
-    t.lexer.begin('titleline')
+def t_titleline_BOM(t):
+    # the byte order mark sometimes appears before a clipping.
+    # Ignore it.
+    '﻿'
+    pass
 
 t_titleline_TITLE = r'.+\(' # up to last set of parentheses
 t_titleline_AUTHORS = r'[^(]+\)' # inside last set of parentheses
 
-def t_begin_locationline(t):
-    r'-\sYour\s'
-    t.lexer.begin('locationline')
-
+t_locationline_YOUR = '-\sYour\s'
 t_locationline_HIGHLIGHT_TYPE = 'Highlight'
 t_locationline_BOOKMARK_TYPE = 'Bookmark'
 t_locationline_NOTE_TYPE = 'Note'
@@ -65,15 +67,21 @@ t_locationline_TIME = r'\d\d:\d\d:\d\d'
 
 t_contentline_CONTENT = r'.+'
 
-t_CLIPPING_SEP = r'=========='
+t_separatorline_CLIPPING_SEP = r'=========='
 
 def t_ANY_NEWLINE(t):
-    r'\n+'
+    r'\n'
     t.lexer.lineno += t.value.count("\n")
-    if t.value.count('\n') == 2:
+    if t.lexer.lexstate == 'titleline':
+        t.lexer.begin('locationline')
+    elif t.lexer.lexstate == 'locationline':
+        t.lexer.begin('blankline')
+    elif t.lexer.lexstate == 'blankline':
         t.lexer.begin('contentline')
-    else:
-        t.lexer.begin('INITIAL')
+    elif t.lexer.lexstate == 'contentline':
+        t.lexer.begin('separatorline')
+    elif t.lexer.lexstate == 'separatorline':
+        t.lexer.begin('titleline')
     return t
 
 
@@ -120,16 +128,26 @@ def p_authorline(p):
         'authors': p[2][:-1],
     }
 
-def p_locationline(p):
+def p_locationline_onpage(p):
     '''
-    locationline : type ON_PAGE PAGE FIELD_SEP LOCATION_INTRO LOCATION_RANGE FIELD_SEP datetime
-                 | type AT_LOCATION LOCATION_RANGE FIELD_SEP datetime
+    locationline : YOUR type ON_PAGE PAGE FIELD_SEP LOCATION_INTRO LOCATION FIELD_SEP datetime
     '''
     p[0] = {
         'type': p[2],
         'page': p[4],
-        'location': p[6],
-        'datetime': p[8],
+        'location': p[7],
+        'datetime': p[9],
+    }
+
+def p_locationline_loconly(p):
+    '''
+    locationline : YOUR type AT_LOCATION LOCATION FIELD_SEP datetime
+    '''
+    p[0] = {
+        'type': p[2],
+        'page': '',
+        'location': p[4],
+        'datetime': p[6],
     }
 
 def p_type(p):
@@ -158,7 +176,7 @@ def get_content(fname):
         content = f.read()
     return content
 
-def test_lexer(lexer, data):
+def test_lexer(lexer):
     data = '''﻿Continuous Delivery (Jez Humble;David Farley)
 - Your Highlight on page 205 | location 3134-3135 | Added on Saturday, 5 December 2015 18:46:33
 
