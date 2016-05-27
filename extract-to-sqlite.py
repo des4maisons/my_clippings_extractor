@@ -24,7 +24,7 @@ tokens = (
     'PAGE',
     'AT_LOCATION',
     'LOCATION_INTRO',
-    'LOCATION_RANGE',
+    'LOCATION',
     'FIELD_SEP',
     'ADDED_ON',
     'DAY_OF_WEEK',
@@ -55,7 +55,7 @@ t_locationline_ON_PAGE = '\son\spage\s'
 t_locationline_PAGE = '(?<=' + t_locationline_ON_PAGE + ' )\d+'
 t_locationline_AT_LOCATION = '\sat\slocation\s'
 t_locationline_LOCATION_INTRO = 'location\s'
-t_locationline_LOCATION_RANGE = '\d+-\d+'
+t_locationline_LOCATION = '(?<=location\s)\d+(-\d+)?'
 t_locationline_FIELD_SEP = r'\s\|\s'
 t_locationline_ADDED_ON = 'Added\son\s'
 t_locationline_DAY_OF_WEEK = 'Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday'
@@ -114,7 +114,7 @@ def p_clipping_notequote(p):
 
 def p_clipping_bookmark(p):
     '''
-    clipping : authorline NEWLINE locationline NEWLINE NEWLINE NEWLINE
+    clipping : authorline NEWLINE locationline NEWLINE NEWLINE NEWLINE CLIPPING_SEP
     '''
     p[0] = { **p[1], **p[3], 'content': '' }
     PrettyPrinter(indent=4).pprint(p[0])
@@ -186,6 +186,16 @@ The smoke test, or deployment test, is probably the most important test to write
 - Your Highlight on page 216 | location 3300-3302 | Added on Saturday, 5 December 2015 18:50:48
 
 Acceptance tests written without developer involvement also tend to be tightly coupled to the UI and thus brittle and badly factored, because the testers don’t have any insight into the UI’s underlying design and lack the skills to create abstraction layers or run acceptance tests against a public API.
+==========
+﻿On Writing Well, 30th Anniversary Edition (William Zinsser)
+- Your Bookmark on page 19 | location 288 | Added on Saturday, 19 December 2015 16:12:17
+
+
+==========
+Thinking in Systems (Donella H. Meadows)
+- Your Highlight on page 153 | location 2332-2334 | Added on Friday, 13 May 2016 09:04:21
+
+You have the problem of wrong goals when you find something stupid happening “because it’s the rule.” You have the problem of rule beating when you find something stupid happening because it’s the way around the rule.
 ==========
 '''
     # Give the lexer some input
