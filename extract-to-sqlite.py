@@ -2,6 +2,7 @@
 import sys
 import kindle_clippings_lexer
 from kindle_clippings_parser import yacc
+from pprint import PrettyPrinter
 
 def get_content(fname):
     with open(fname) as f:
@@ -13,4 +14,4 @@ if __name__ == '__main__':
         print('Usage: ' + sys.argv[0] + ' /path/to/my_clippings.txt', file=sys.stderr)
         sys.exit(1)
 
-    yacc.parse(get_content(sys.argv[1]))
+    PrettyPrinter(indent=4).pprint(yacc.parse(get_content(sys.argv[1])))

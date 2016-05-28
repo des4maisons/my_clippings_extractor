@@ -1,6 +1,6 @@
+import sys
 import ply.yacc as yacc
 from kindle_clippings_lexer import tokens
-from pprint import PrettyPrinter
 from datetime import datetime
 
 start = 'clippings'
@@ -9,27 +9,35 @@ def p_empty(p):
     'empty :'
     pass
 
-def p_clippings(p):
+def p_clippings_multi(p):
     '''
     clippings : clipping NEWLINE clippings
-              | clipping
-              | empty
     '''
-    pass
+    p[0] = [p[1]] + p[3]
+
+def p_clippings_one(p):
+    '''
+    clippings : clipping
+    '''
+    p[0] = [p[1]]
+
+def p_clippings_empty(p):
+    '''
+    clippings : empty
+    '''
+    p[0] = []
 
 def p_clipping_notequote(p):
     '''
     clipping : authorline NEWLINE locationline NEWLINE NEWLINE CONTENT NEWLINE CLIPPING_SEP
     '''
     p[0] = { **p[1], **p[3], 'content': p[6] }
-    PrettyPrinter(indent=4).pprint(p[0])
 
 def p_clipping_bookmark(p):
     '''
     clipping : authorline NEWLINE locationline NEWLINE NEWLINE NEWLINE CLIPPING_SEP
     '''
     p[0] = { **p[1], **p[3], 'content': '' }
-    PrettyPrinter(indent=4).pprint(p[0])
 
 def p_authorline(p):
     '''
@@ -53,7 +61,7 @@ def p_locationline_onpage(p):
 
 def p_locationline_loconly(p):
     '''
-    locationline : YOUR type AT_LOCATION LOCATION FIELD_SEP datetime
+    locationline : YOUR type LOCATION_INTRO LOCATION FIELD_SEP datetime
     '''
     p[0] = {
         'type': p[2],

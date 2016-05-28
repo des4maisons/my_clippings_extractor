@@ -19,7 +19,6 @@ tokens = (
     'NOTE_TYPE',
     'ON_PAGE',
     'PAGE',
-    'AT_LOCATION',
     'LOCATION_INTRO',
     'LOCATION',
     'FIELD_SEP',

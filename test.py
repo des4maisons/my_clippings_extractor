@@ -1,5 +1,7 @@
 from kindle_clippings_lexer import lexer
 from kindle_clippings_parser import yacc
+from nose.tools import eq_
+
 data = u'''\ufeffContinuous Delivery (Jez Humble;David Farley)
 - Your Highlight on page 205 | location 3134-3135 | Added on Saturday, 5 December 2015 18:46:33
 
@@ -27,8 +29,11 @@ def test_tokenize():
 
     while True:
         tok = lexer.token()
+        print(tok)
         if not tok:
             break
 
 def test_parse():
-    yacc.parse(data)
+    lexer.begin('titleline')
+    x = yacc.parse(data)
+    eq_(len(x), 4)
