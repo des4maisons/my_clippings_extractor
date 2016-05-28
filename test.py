@@ -29,7 +29,6 @@ def test_tokenize():
 
     while True:
         tok = lexer.token()
-        print(tok)
         if not tok:
             break
 

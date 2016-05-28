@@ -13,10 +13,21 @@ make test
 # Usage
 
 ```
-env/bin/python extract-to-sqlite.py /path/to/my_clippings.txt [(-o|--output) sqlite.db]
+env/bin/python extract-to-sqlite.py --input /path/to/myclippings.txt --output /path/to/sqlite.db
 ```
 
-where `/path/to/my_clippings.txt` is a text file in format similar to the following:
+Once you have done this, you can manipulate the data however you want:
+
+```
+$ sqlite3 sqlite.db
+SQLite version 3.8.10.2 2015-05-20 18:17:19
+Enter ".help" for usage hints.
+sqlite> SELECT COUNT(*) FROM clippings WHERE TITLE LIKE 'continuous deliv%';
+38
+sqlite>
+```
+
+`myclippings.txt` should follow a format similar to:
 
 ```
 Continuous Delivery (Jez Humble;David Farley)
