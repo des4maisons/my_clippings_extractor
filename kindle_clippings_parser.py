@@ -33,11 +33,11 @@ def p_clipping_bookmark(p):
 
 def p_authorline(p):
     '''
-    authorline : TITLE AUTHORS
+    authorline : TITLE AUTHORS_START AUTHORS AUTHORS_END
     '''
     p[0] = {
-        'title': p[1][:-1],
-        'authors': p[2][:-1],
+        'title': p[1],
+        'authors': p[3],
     }
 
 def p_locationline_onpage(p):
@@ -75,7 +75,7 @@ def p_datetime(p):
     datetime : ADDED_ON DAY_OF_WEEK COMMA DAY MONTH YEAR TIME
     '''
     p[0] = datetime.strptime(
-        '%s %s %s %s' %(p[4].strip(), p[5].strip(), p[6].strip(), p[7].strip()),
+        '%s %s %s %s' %(p[4], p[5], p[6], p[7]),
         '%d %B %Y %H:%M:%S',  # 23 December 2015 22:36:59
     )
 

@@ -1,16 +1,16 @@
 from kindle_clippings_lexer import lexer
 from kindle_clippings_parser import yacc
-data = '''﻿Continuous Delivery (Jez Humble;David Farley)
+data = u'''\ufeffContinuous Delivery (Jez Humble;David Farley)
 - Your Highlight on page 205 | location 3134-3135 | Added on Saturday, 5 December 2015 18:46:33
 
 The smoke test, or deployment test, is probably the most important test to write once you have a unit test suite up and running—indeed,
 ==========
-﻿Continuous Delivery (Jez Humble;David Farley)
+\ufeffContinuous Delivery (Jez Humble;David Farley)
 - Your Highlight on page 216 | location 3300-3302 | Added on Saturday, 5 December 2015 18:50:48
 
 Acceptance tests written without developer involvement also tend to be tightly coupled to the UI and thus brittle and badly factored, because the testers don’t have any insight into the UI’s underlying design and lack the skills to create abstraction layers or run acceptance tests against a public API.
 ==========
-﻿On Writing Well, 30th Anniversary Edition (William Zinsser)
+\ufeffOn Writing Well, 30th Anniversary Edition (William Zinsser)
 - Your Bookmark on page 19 | location 288 | Added on Saturday, 19 December 2015 16:12:17
 
 

@@ -10,7 +10,9 @@ states = (
 
 tokens = (
     'TITLE',
+    'AUTHORS_START',
     'AUTHORS',
+    'AUTHORS_END',
     'YOUR',
     'HIGHLIGHT_TYPE',
     'BOOKMARK_TYPE',
@@ -36,29 +38,34 @@ tokens = (
 def t_titleline_BOM(t):
     # the byte order mark sometimes appears before a clipping.
     # Ignore it.
-    '﻿'
+    r'\ufeff'
     pass
 
-t_titleline_TITLE = r'.+\(' # up to last set of parentheses
-t_titleline_AUTHORS = r'[^(]+\)' # inside last set of parentheses
+t_titleline_TITLE = '.+(?=\ \([^)]+\)\n)' # up to last set of parentheses
+t_titleline_AUTHORS = '[^(]+(?=\)\n)' # inside last set of parentheses
+t_titleline_AUTHORS_START = '\ \((?=[^\(]\n)' # opening of last set of parenthesis
+t_titleline_AUTHORS_END = '\)(?=\n)' # closing of last set of parenthesis
 
-t_locationline_YOUR = '-\sYour\s'
+t_locationline_YOUR = '-\ Your'
 t_locationline_HIGHLIGHT_TYPE = 'Highlight'
 t_locationline_BOOKMARK_TYPE = 'Bookmark'
 t_locationline_NOTE_TYPE = 'Note'
-t_locationline_ON_PAGE = '\son\spage\s'
-t_locationline_PAGE = '(?<=' + t_locationline_ON_PAGE + ' )\d+'
-t_locationline_AT_LOCATION = '\sat\slocation\s'
-t_locationline_LOCATION_INTRO = 'location\s'
-t_locationline_LOCATION = '(?<=location\s)\d+(-\d+)?'
-t_locationline_FIELD_SEP = r'\s\|\s'
-t_locationline_ADDED_ON = 'Added\son\s'
+t_locationline_ON_PAGE = 'on\ page'
+t_locationline_PAGE = '(?<=' + t_locationline_ON_PAGE + '\ )\d+'
+t_locationline_LOCATION_INTRO = 'at\ location|location'
+t_locationline_LOCATION = '(?<=location\ )\d+(-\d+)?'
+t_locationline_FIELD_SEP = r'\|'
+t_locationline_ADDED_ON = 'Added\ on'
 t_locationline_DAY_OF_WEEK = 'Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday'
-t_locationline_DAY = r'(?<=,\s)\d\d?\s'
-t_locationline_COMMA = ',\s'
-t_locationline_YEAR = r'\s\d\d\d\d\s'
+t_locationline_DAY = r'(?<=,\ )\d\d?(?=\ )'
+t_locationline_COMMA = ','
+t_locationline_YEAR = r'(?<=\ )\d\d\d\d(?=\ )'
 t_locationline_MONTH = 'January|February|March|April|May|June|July|August|September|October|November|December'
 t_locationline_TIME = r'\d\d:\d\d:\d\d'
+
+def t_locationline_SPACE(t):
+    '\ '
+    pass
 
 t_contentline_CONTENT = r'.+'
 
